@@ -1,0 +1,28 @@
+Présentation Flutter
+le 23/06/2020
+
+Ordre du jour
+* Flutter en bref
+* Créer un projet mobile
+* Créer un projet web
+* Les channels
+* Déploiement
+* Les sites utiles
+
+Les outils
+Git (Github ou Gitlab ?)
+CI/CD
+Firebase
+Android studio
+Flutter
+Dart, Kotlin, Swift
+Maquettes (Sketch, autre… )
+
+Les sites utiles
+https://flutter.dev/
+https://itsallwidgets.com/
+
+Prérequis
+Repository Git
+Compte développeur Google XPEHO
+Compte développeur IOS XPEHO

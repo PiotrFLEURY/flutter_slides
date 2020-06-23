@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'slide.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -9,17 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
@@ -30,15 +21,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -48,40 +30,214 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<SlideData> slides = List();
 
+  PageController _pageController;
+  ScrollController _scrollController;
+  var _currentPage = 0;
+  bool _fullScreen = false;
+
+  var screenHeight;
+  var screenWidth;
+
   @override
   void initState() {
     super.initState();
+    _pageController = PageController();
+    _scrollController = ScrollController();
     loadSlides();
   }
 
   @override
   Widget build(BuildContext context) {
+    screenHeight = MediaQuery.of(context).size.height;
+    screenWidth = MediaQuery.of(context).size.width;
+
+    if (kIsWeb && screenHeight < screenWidth) {
+      return buildDeskLayout();
+    }
+    return buildMobileLayout();
+  }
+
+  Widget buildMobileLayout() {
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        var height = orientation == Orientation.landscape
+            ? screenHeight / 4
+            : screenHeight / 2;
+        var drawerWidth = orientation == Orientation.landscape
+            ? screenWidth * .2
+            : screenWidth * .8;
+        return Scaffold(
+          drawer: Container(
+            width: drawerWidth,
+            child: Material(
+              elevation: 4.0,
+              child: ListView(
+                controller: _scrollController,
+                children: List.generate(
+                  slides.length,
+                  (index) {
+                    return InkWell(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        _gotoPage(index);
+                      },
+                      child: SizedBox(
+                        height: height,
+                        width: double.infinity,
+                        child: Container(
+                          color: index == _currentPage
+                              ? Colors.orange
+                              : Colors.grey[200],
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Slide(Slide.smallSize, slides[index]),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+          body: buildMainSlideView(height),
+        );
+      },
+    );
+  }
+
+  Widget buildDeskLayout() {
+    var screenWidth = MediaQuery.of(context).size.width;
+    var thumbListWidth = _fullScreen ? 0 : screenWidth * .2;
+    var thumbItemHeight = MediaQuery.of(context).size.height / 4;
     return Scaffold(
       body: Row(
         children: <Widget>[
-          SizedBox(
-            width: 250,
+          AnimatedContainer(
+            height: double.infinity,
+            width: thumbListWidth,
+            duration: Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
             child: ListView(
-                children: List.generate(slides.length, (index) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Slide(Slide.smallSize, slides[index]),
-              );
-            })),
+              controller: _scrollController,
+              children: List.generate(
+                slides.length,
+                (index) {
+                  return InkWell(
+                    onTap: () => _gotoPage(index),
+                    child: SizedBox(
+                      height: thumbItemHeight,
+                      width: double.infinity,
+                      child: Container(
+                        color: index == _currentPage
+                            ? Colors.orange
+                            : Colors.grey[200],
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Slide(Slide.smallSize, slides[index]),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
           ),
           Expanded(
-            child: PageView(
-              children: List.generate(slides.length, (index) {
-                return Padding(
-                  padding: const EdgeInsets.all(48.0),
-                  child: Slide(Slide.bigSize, slides[index]),
-                );
-              }),
-            ),
+            child: buildMainSlideView(thumbItemHeight),
           ),
         ],
       ),
     );
+  }
+
+  Stack buildMainSlideView(double thumbItemHeight) {
+    return Stack(
+      children: [
+        buildPageView(thumbItemHeight),
+        buildToolbar(),
+      ],
+    );
+  }
+
+  Positioned buildToolbar() {
+    return Positioned(
+      bottom: 0,
+      right: 0,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.black.withAlpha(50),
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          child: Row(
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.arrow_left,
+                ),
+                color: _fullScreen ? Colors.white : Colors.black,
+                onPressed: () => _gotoPage(_currentPage - 1),
+              ),
+              IconButton(
+                icon: Icon(
+                  _fullScreen ? Icons.fullscreen_exit : Icons.fullscreen,
+                ),
+                color: _fullScreen ? Colors.white : Colors.black,
+                onPressed: () => _toggleFullScreen(),
+              ),
+              IconButton(
+                icon: Icon(
+                  Icons.arrow_right,
+                ),
+                color: _fullScreen ? Colors.white : Colors.black,
+                onPressed: () => _gotoPage(_currentPage + 1),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  PageView buildPageView(double thumbItemHeight) {
+    return PageView(
+      onPageChanged: (index) {
+        _scrollController?.animateTo(
+          index * thumbItemHeight,
+          duration: Duration(milliseconds: 400),
+          curve: Curves.decelerate,
+        );
+        setState(() {
+          _currentPage = index;
+        });
+      },
+      controller: _pageController,
+      children: List.generate(slides.length, (index) {
+        return AnimatedContainer(
+          duration: Duration(
+            milliseconds: 400,
+          ),
+          padding: _fullScreen ? EdgeInsets.zero : EdgeInsets.all(48.0),
+          child: Slide(Slide.bigSize, slides[index]),
+        );
+      }),
+    );
+  }
+
+  void _gotoPage(index) {
+    _pageController?.animateToPage(
+      index,
+      duration: Duration(milliseconds: 400),
+      curve: Curves.decelerate,
+    );
+  }
+
+  void _toggleFullScreen() {
+    setState(() {
+      _fullScreen = !_fullScreen;
+    });
   }
 
   void loadSlides() async {

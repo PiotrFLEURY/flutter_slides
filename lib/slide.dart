@@ -5,17 +5,15 @@ class SlideData {
   String content;
 
   SlideData(this.title, this.content);
-
 }
 
 class Slide extends StatelessWidget {
-
   static const int smallSize = 1;
   static const int bigSize = 2;
 
-  int sizeMode;
+  final int sizeMode;
 
-  SlideData slide;
+  final SlideData slide;
 
   Slide(this.sizeMode, this.slide);
 
@@ -24,8 +22,7 @@ class Slide extends StatelessWidget {
     return Material(
       elevation: 4.0,
       child: Container(
-        width: geWidth(),
-        height: getHeight(),
+        width: double.infinity,
         decoration: BoxDecoration(
             image: DecorationImage(
                 image: AssetImage("assets/images/flutter-bg.png"),
@@ -34,10 +31,22 @@ class Slide extends StatelessWidget {
           padding: const EdgeInsets.all(24.0),
           child: Column(
             children: <Widget>[
-              Text(slide.title, style: TextStyle(color: Colors.white, fontSize: getTitleFontSize()),),
+              Text(
+                slide.title,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: getTitleFontSize(context),
+                ),
+              ),
               Expanded(
                 child: Center(
-                  child: Text(slide.content, style: TextStyle(color: Colors.white, fontSize: getContentFontSize()),),
+                  child: Text(
+                    slide.content,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: getContentFontSize(context),
+                    ),
+                  ),
                 ),
               )
             ],
@@ -48,30 +57,34 @@ class Slide extends StatelessWidget {
   }
 
   double geWidth() {
-    if(sizeMode == smallSize) {
+    if (sizeMode == smallSize) {
       return 200;
     }
     return 800;
   }
 
   double getHeight() {
-    if(sizeMode == smallSize) {
+    if (sizeMode == smallSize) {
       return 150;
     }
     return 600;
   }
 
-  double getTitleFontSize() {
-    if(sizeMode == smallSize) {
-      return 25;
+  double getTitleFontSize(context) {
+    var screenHeight = MediaQuery.of(context).size.height;
+    var targetSize = screenHeight / 20;
+    if (sizeMode == smallSize) {
+      return targetSize / 2;
     }
-    return 100;
+    return targetSize;
   }
 
-  double getContentFontSize() {
-    if(sizeMode == smallSize) {
-      return 8;
+  double getContentFontSize(context) {
+    var screenHeight = MediaQuery.of(context).size.height;
+    var targetSize = screenHeight / 30;
+    if (sizeMode == smallSize) {
+      return targetSize / 2;
     }
-    return 32;
+    return targetSize;
   }
 }
