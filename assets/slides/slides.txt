@@ -1,28 +1,51 @@
-Présentation Flutter
-le 23/06/2020
+Flutter
+Immertion
 
 Ordre du jour
-* Flutter en bref
-* Créer un projet mobile
-* Créer un projet web
-* Les channels
-* Déploiement
-* Les sites utiles
+Flutter en bref
+Créer un projet
+Ajout du support web
+Les channels
+Déploiement
+Les outils
+Les sites utiles
+
+Flutter en bref
+Framework de dev mobile cross plateforme
+Langage Dart (https://dart.dev/)
+Web en béta
+Desktop en alpha
+
+Créer un projet
+https://flutter.dev/docs/get-started/install
+flutter create mon-projet
+flutter run
+
+Ajout du support web
+flutter channel beta
+flutter upgrade
+flutter config --enable-web
+flutter run -d chrome
+
+Les channels
+Code spécifique plateforme
+MethodChannel => appel ponctuel
+EventChannel => abonnement à un stream
+
+Déploiement
+https://flutter.dev/docs/deployment/android
+https://flutter.dev/docs/deployment/ios
+https://flutter.dev/docs/deployment/web#deploying-to-the-web
+https://firebase.google.com/docs/hosting
 
 Les outils
-Git (Github ou Gitlab ?)
-CI/CD
+CI/CD => Flutter actions / http://codemagic.io/
 Firebase
 Android studio
-Flutter
+VSCode
+XCode
 Dart, Kotlin, Swift
-Maquettes (Sketch, autre… )
 
 Les sites utiles
 https://flutter.dev/
 https://itsallwidgets.com/
-
-Prérequis
-Repository Git
-Compte développeur Google XPEHO
-Compte développeur IOS XPEHO
