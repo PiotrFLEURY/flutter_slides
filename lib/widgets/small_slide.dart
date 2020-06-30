@@ -11,14 +11,13 @@ class SmallSlide extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.0),
-        color: Colors.indigo,
+        color: Colors.white,
       ),
       child: Center(
         child: Text(
           slide.title,
           style: TextStyle(
-            color: Colors.white,
+            color: Colors.black.withAlpha(200),
             fontSize: getTitleFontSize(context),
           ),
         ),

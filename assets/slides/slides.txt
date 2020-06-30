@@ -1,51 +1,78 @@
 Flutter
-Immertion
+The exhibition
 
 Ordre du jour
-Flutter en bref
-Créer un projet
-Ajout du support web
-Les channels
-Déploiement
-Les outils
+introduction Flutter
+Android
+IOS
+web / PWA
+tests
+platform specific code
+distribution
+démo cross platform
+questions ouvertes
 Les sites utiles
 
-Flutter en bref
-Framework de dev mobile cross plateforme
-Langage Dart (https://dart.dev/)
-Web en béta
+Introduction Flutter
+Framework de dev mobile cross plateforme android et IOS
+Web en version beta
 Desktop en alpha
+VSCode, Android studio, XCode
+Dart pour flutter, Kotlin - Java pour android, Swift - Objective-C pour IOS
 
 Créer un projet
 https://flutter.dev/docs/get-started/install
-flutter create mon-projet
-flutter run
 
-Ajout du support web
-flutter channel beta
-flutter upgrade
-flutter config --enable-web
-flutter run -d chrome
+Android & IOS
+$ flutter create my-project
+$ flutter run
+edit code
+hot reload
 
-Les channels
-Code spécifique plateforme
+Ajout du support web / PWA
+https://flutter.dev/web
+$ flutter channel beta
+$ flutter upgrade
+$ flutter config --enable-web
+$ flutter run -d chrome
+
+Les tests
+https://flutter.dev/docs/testing
+Tests unitaires avec mockito
+Tests widget - headless
+Tests driver - équivalent tests espresso sous android
+
+Platform specific code
+https://flutter.dev/docs/development/platform-integration/platform-channels
+AKA "channels"
 MethodChannel => appel ponctuel
 EventChannel => abonnement à un stream
 
-Déploiement
+Distribution
+Android:
 https://flutter.dev/docs/deployment/android
+IOS:
 https://flutter.dev/docs/deployment/ios
+Web:
 https://flutter.dev/docs/deployment/web#deploying-to-the-web
 https://firebase.google.com/docs/hosting
+CI/CD:
+https://github.com/marketplace/actions/flutter-action 
+http://codemagic.io/
+Firebase:
+https://firebase.google.com/
 
-Les outils
-CI/CD => Flutter actions / http://codemagic.io/
-Firebase
-Android studio
-VSCode
-XCode
-Dart, Kotlin, Swift
+démo cross platform
+Ces slides vous ont été présentés avec une app Flutter !
+
+questions ouvertes
 
 Les sites utiles
 https://flutter.dev/
+https://flutter.dev/docs/get-started/
+https://flutter.dev/docs/testing
+https://flutter.dev/web
+https://flutter.dev/docs/development/platform-integration/platform-channels
 https://itsallwidgets.com/
+https://dart.dev/
+http://codemagic.io/

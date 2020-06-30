@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slides/data/slide_data.dart';
+import 'package:flutter_slides/providers/page_provider.dart';
 import 'package:flutter_slides/providers/platform_provider.dart';
 import 'package:flutter_slides/providers/slides_provider.dart';
 import 'package:flutter_slides/widgets/big_slide.dart';
 import 'package:flutter_slides/widgets/small_slide.dart';
-import 'package:get_it/get_it.dart';
-import 'package:provider/provider.dart';
 
 class DesktopLayout extends StatefulWidget {
+  final PlatformProvider platformProvider;
+  final SlidesProvider slidesProvider;
+  final PageProvider pageProvider;
+
+  DesktopLayout(this.platformProvider, this.slidesProvider, this.pageProvider);
+
   @override
   _DesktopLayoutState createState() => _DesktopLayoutState();
 }
 
 class _DesktopLayoutState extends State<DesktopLayout> {
-  var _currentPage = 0;
   PageController _pageController;
   ScrollController _scrollController;
 
@@ -22,79 +26,77 @@ class _DesktopLayoutState extends State<DesktopLayout> {
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
+
     _scrollController = ScrollController();
   }
 
   @override
   Widget build(BuildContext context) {
-    return buildDeskLayout();
-  }
-
-  Widget buildDeskLayout() {
     var screenWidth = MediaQuery.of(context).size.width;
-    var thumbListWidth = _fullScreen ? 0 : screenWidth * .2;
-    var thumbItemHeight = MediaQuery.of(context).size.height / 4;
-    return ChangeNotifierProvider.value(
-      value: GetIt.I.get<SlidesProvider>(),
-      child: Consumer<SlidesProvider>(
-        builder: (context, slidesProvider, _) {
-          final slides = slidesProvider.slides;
-          return Scaffold(
-            body: Row(
-              children: <Widget>[
-                AnimatedContainer(
-                  height: double.infinity,
-                  width: thumbListWidth.toDouble(),
-                  duration: Duration(milliseconds: 400),
-                  curve: Curves.easeInOut,
-                  child: ListView(
-                    controller: _scrollController,
-                    children: List.generate(
-                      slides.length,
-                      (index) {
-                        return InkWell(
-                          onTap: () => _gotoPage(index),
-                          child: SizedBox(
-                            height: thumbItemHeight,
-                            width: double.infinity,
-                            child: Container(
-                              color: index == _currentPage
-                                  ? Colors.orange
-                                  : Colors.grey[200],
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SmallSlide(slides[index]),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
+    var thumbListWidth = _fullScreen ? 0 : screenWidth * .1;
+    var thumbItemHeight = MediaQuery.of(context).size.height / 8;
+    final slides = widget.slidesProvider.slides;
+    final currentPage = widget.pageProvider.currentPage;
+    _pageController = PageController(initialPage: currentPage);
+    return Scaffold(
+      body: Row(
+        children: <Widget>[
+          AnimatedContainer(
+            height: double.infinity,
+            width: thumbListWidth.toDouble(),
+            duration: Duration(milliseconds: 400),
+            curve: Curves.easeInOut,
+            child: ListView(
+              controller: _scrollController,
+              children: List.generate(
+                slides.length,
+                (index) {
+                  return InkWell(
+                    onTap: () => _gotoPage(index),
+                    child: SizedBox(
+                      height: thumbItemHeight,
+                      width: double.infinity,
+                      child: Container(
+                        color: index == currentPage
+                            ? Colors.blue
+                            : Colors.grey[200],
+                        child: Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: SmallSlide(slides[index]),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                Expanded(
-                  child: buildMainSlideView(slides, thumbItemHeight),
-                ),
-              ],
+                  );
+                },
+              ),
             ),
-          );
-        },
+          ),
+          Expanded(
+            child: buildMainSlideView(widget.pageProvider,
+                widget.platformProvider, currentPage, slides, thumbItemHeight),
+          ),
+        ],
       ),
     );
   }
 
-  Stack buildMainSlideView(List<SlideData> slides, double thumbItemHeight) {
+  Stack buildMainSlideView(
+      PageProvider pageProvider,
+      PlatformProvider platformProvider,
+      int currentPage,
+      List<SlideData> slides,
+      double thumbItemHeight) {
     return Stack(
       children: [
-        buildPageView(slides, thumbItemHeight),
-        buildToolbar(),
+        buildPageView(pageProvider, slides, thumbItemHeight),
+        buildToolbar(platformProvider, pageProvider),
       ],
     );
   }
 
-  Positioned buildToolbar() {
-    final platformProvider = Provider.of<PlatformProvider>(context);
+  Positioned buildToolbar(
+      PlatformProvider platformProvider, PageProvider pageProvider) {
+    final currentPage = pageProvider.currentPage;
     return Positioned(
       bottom: 0,
       right: 0,
@@ -130,7 +132,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                   Icons.arrow_left,
                 ),
                 color: _fullScreen ? Colors.white : Colors.black,
-                onPressed: () => _gotoPage(_currentPage - 1),
+                onPressed: () => _gotoPage(currentPage - 1),
               ),
               IconButton(
                 icon: Icon(
@@ -144,7 +146,7 @@ class _DesktopLayoutState extends State<DesktopLayout> {
                   Icons.arrow_right,
                 ),
                 color: _fullScreen ? Colors.white : Colors.black,
-                onPressed: () => _gotoPage(_currentPage + 1),
+                onPressed: () => _gotoPage(currentPage + 1),
               ),
             ],
           ),
@@ -153,11 +155,12 @@ class _DesktopLayoutState extends State<DesktopLayout> {
     );
   }
 
-  PageView buildPageView(List<SlideData> slides, double thumbItemHeight) {
+  PageView buildPageView(PageProvider pageProvider, List<SlideData> slides,
+      double thumbItemHeight) {
     return PageView(
       onPageChanged: (index) {
         setState(() {
-          _currentPage = index;
+          pageProvider.currentPage = index;
         });
       },
       controller: _pageController,

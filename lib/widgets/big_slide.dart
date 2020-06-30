@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slides/data/slide_data.dart';
+import 'package:flutter_slides/widgets/command_line.dart';
+import 'package:flutter_slides/widgets/link.dart';
+
+const backgroundColor = const Color(0xffe5e9fa);
 
 class BigSlide extends StatelessWidget {
   final SlideData slide;
@@ -10,57 +14,81 @@ class BigSlide extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       elevation: 4.0,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Flexible(
-            flex: 1,
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.indigo,
-              ),
-              child: Center(
-                child: Text(
-                  slide.title,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: getTitleFontSize(context),
-                  ),
-                ),
-              ),
+      color: Colors.white,
+      child: Stack(
+        children: [
+          Positioned(
+            bottom: 16,
+            right: 16,
+            child: Image.asset(
+              "assets/images/flutter-bg.png",
+              width: 300,
             ),
           ),
-          Expanded(
-            flex: 9,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(24.0),
-                child: ListView(
-                  children: formatContent(context, slide.content),
+          Padding(
+            padding: const EdgeInsets.all(48.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Flexible(
+                  flex: 1,
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                    ),
+                    child: Text(
+                      slide.title,
+                      style: TextStyle(
+                        color: Colors.indigo,
+                        fontSize: getTitleFontSize(context),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+                Flexible(
+                  flex: 1,
+                  child: Container(),
+                ),
+                Expanded(
+                  flex: 9,
+                  child: Container(
+                    width: double.infinity,
+                    child: ListView(
+                      children: formatContent(context, slide.content),
+                    ),
+                  ),
+                )
+              ],
             ),
-          )
+          ),
         ],
       ),
     );
   }
 
   List<Widget> formatContent(BuildContext context, String content) {
-    return content.split('\n').map((e) => "- $e").map(
+    return content.split('\n').map(
       (e) {
         return Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text(
-            e,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: getContentFontSize(context),
-            ),
+          child: Builder(
+            builder: (context) {
+              if (e.startsWith("http")) {
+                return Link(e);
+              } else if (e.startsWith("\$")) {
+                return CommandLine(e);
+              } else {
+                return Text(
+                  "- $e",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: getContentFontSize(context),
+                  ),
+                );
+              }
+            },
           ),
         );
       },
