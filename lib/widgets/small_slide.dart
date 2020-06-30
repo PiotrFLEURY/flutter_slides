@@ -15,14 +15,12 @@ class SmallSlide extends StatelessWidget {
       ),
       padding: EdgeInsets.all(4.0),
       child: Center(
-        child: Flexible(
-          child: Text(
-            slide.title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.black.withAlpha(200),
-              fontSize: getTitleFontSize(context),
-            ),
+        child: Text(
+          slide.title,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.black.withAlpha(200),
+            fontSize: getTitleFontSize(context),
           ),
         ),
       ),
