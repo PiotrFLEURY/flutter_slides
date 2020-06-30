@@ -18,7 +18,7 @@ class BigSlide extends StatelessWidget {
       child: Stack(
         children: [
           Positioned(
-            bottom: 16,
+            top: 16,
             right: 16,
             child: Image.asset(
               "assets/images/flutter-bg.png",
@@ -27,44 +27,59 @@ class BigSlide extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(48.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Flexible(
-                  flex: 1,
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                    ),
+            child: Builder(builder: (context) {
+              if (slide.content.isEmpty) {
+                return Center(
                     child: Text(
-                      slide.title,
-                      style: TextStyle(
-                        color: Colors.indigo,
-                        fontSize: getTitleFontSize(context),
-                      ),
-                    ),
+                  slide.title,
+                  style: TextStyle(
+                    fontSize: 48.0,
+                    color: Colors.indigo,
                   ),
-                ),
-                Flexible(
-                  flex: 1,
-                  child: Container(),
-                ),
-                Expanded(
-                  flex: 9,
-                  child: Container(
-                    width: double.infinity,
-                    child: ListView(
-                      children: formatContent(context, slide.content),
-                    ),
-                  ),
-                )
-              ],
-            ),
+                ));
+              }
+              return buildNormalSlide(context);
+            }),
           ),
         ],
       ),
+    );
+  }
+
+  Column buildNormalSlide(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Flexible(
+          flex: 1,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+            ),
+            child: Text(
+              slide.title,
+              style: TextStyle(
+                color: Colors.indigo,
+                fontSize: getTitleFontSize(context),
+              ),
+            ),
+          ),
+        ),
+        Flexible(
+          flex: 1,
+          child: Container(),
+        ),
+        Expanded(
+          flex: 9,
+          child: Container(
+            width: double.infinity,
+            child: ListView(
+              children: formatContent(context, slide.content),
+            ),
+          ),
+        )
+      ],
     );
   }
 

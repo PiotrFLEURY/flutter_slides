@@ -4,6 +4,8 @@ import 'package:flutter_slides/data/slide_data.dart';
 import 'package:flutter_slides/providers/page_provider.dart';
 import 'package:flutter_slides/providers/platform_provider.dart';
 import 'package:flutter_slides/providers/slides_provider.dart';
+import 'package:flutter_slides/widgets/command_line.dart';
+import 'package:flutter_slides/widgets/link.dart';
 
 class IOSLayout extends StatelessWidget {
   final PlatformProvider platformProvider;
@@ -137,11 +139,19 @@ class IOSLayout extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
-        children: List.generate(
-            slideContent.length,
-            (index) => Text(
-                  slideContent[index],
-                )),
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: List.generate(slideContent.length, (index) {
+          final text = slideContent[index];
+          if (text.startsWith("http")) {
+            return Link(text);
+          } else if (text.startsWith("\$")) {
+            return CommandLine(text);
+          }
+          return Text(
+            text,
+          );
+        }),
       ),
     );
   }

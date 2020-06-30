@@ -8,9 +8,10 @@ class CommandLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: 50,
+      alignment: Alignment.centerLeft,
       decoration: BoxDecoration(
         color: Colors.black.withAlpha(200),
-        borderRadius: BorderRadius.circular(8.0),
       ),
       padding: EdgeInsets.all(8.0),
       child: Text(

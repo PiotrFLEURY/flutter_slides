@@ -12,7 +12,7 @@ class SlidesProvider with ChangeNotifier {
     rawSlides.forEach((slide) {
       String title = slide.split("\n")[0];
       String body = slide.replaceFirst("$title\n", "");
-      _slides.add(SlideData(title, body));
+      _slides.add(SlideData(title, title == body ? "" : body));
     });
     notifyListeners();
   }

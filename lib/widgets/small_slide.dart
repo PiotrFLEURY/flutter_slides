@@ -13,12 +13,16 @@ class SmallSlide extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
       ),
+      padding: EdgeInsets.all(4.0),
       child: Center(
-        child: Text(
-          slide.title,
-          style: TextStyle(
-            color: Colors.black.withAlpha(200),
-            fontSize: getTitleFontSize(context),
+        child: Flexible(
+          child: Text(
+            slide.title,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.black.withAlpha(200),
+              fontSize: getTitleFontSize(context),
+            ),
           ),
         ),
       ),

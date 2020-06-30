@@ -1,5 +1,4 @@
-Flutter
-The exhibition
+The Flutter exhibition
 
 Ordre du jour
 introduction Flutter

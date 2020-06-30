@@ -3,6 +3,7 @@ import 'package:flutter_slides/data/slide_data.dart';
 import 'package:flutter_slides/providers/page_provider.dart';
 import 'package:flutter_slides/providers/platform_provider.dart';
 import 'package:flutter_slides/providers/slides_provider.dart';
+import 'package:flutter_slides/widgets/command_line.dart';
 import 'package:flutter_slides/widgets/link.dart';
 
 class AndroidLayout extends StatelessWidget {
@@ -120,13 +121,16 @@ class AndroidLayout extends StatelessWidget {
       itemCount: slideContent.length,
       itemBuilder: (context, index) {
         var text = slideContent[index];
+        if (text.startsWith("http")) {
+          return Link(text);
+        } else if (text.startsWith("\$")) {
+          return CommandLine(text);
+        }
         return ListTile(
           leading: Icon(Icons.donut_large),
-          title: text.startsWith("http")
-              ? Link(text)
-              : Text(
-                  text,
-                ),
+          title: Text(
+            text,
+          ),
         );
       },
     );
